@@ -10,4 +10,6 @@ curl -v -d '{"info":"from client","details":{"some":"more"}}' --insecure --cert 
 
 # Creating JSSE Key Stores
 Only reqired if you make changes
+```
 src/main/resources/jsse/gen-certs.sh
+```
