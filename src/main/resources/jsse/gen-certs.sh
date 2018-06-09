@@ -25,7 +25,7 @@ keytool -export -alias client -file client.cer -keystore client.jks -storepass $
 keytool -export -alias client -file client.crt -keystore client.jks -storepass $CLIENTSTORE_PASS
 # > clienttrust.jks
 keytool -noprompt -import -v -trustcacerts -alias client -file client.crt -keystore trust.jks \
-	-deststorepass $TRUSTSTRORE_PASS
+	-trustcacerts -deststorepass $TRUSTSTRORE_PASS
 
 ## Create server jks 
 # > server.jks
@@ -36,8 +36,7 @@ keytool -genkey -alias localhost -keyalg RSA -keystore server.jks -keysize 2048 
 # > server.crt
 keytool -export -alias localhost -file server.crt -keystore server.jks -storepass $SERVERSTORE_PASS
 keytool -noprompt -import -v -trustcacerts -alias localhost -file server.crt -keystore trust.jks \
-	-deststorepass $TRUSTSTRORE_PASS
-
+	-trustcacerts -deststorepass $TRUSTSTRORE_PASS
 
 ## Import postman-echo.com certificate into trust store
 # 1) Create crt > postman-echo.com.crt
@@ -48,7 +47,7 @@ echo -n | openssl s_client -showcerts -servername postman-echo.com \
  
 # 2) Import the server certificate into Truststore
 keytool -noprompt -import -alias postman-echo.com -file postman-echo.com.crt -keystore trust.jks \
-	-deststorepass $TRUSTSTRORE_PASS
+	-trustcacerts -deststorepass $TRUSTSTRORE_PASS
 
 ## Convert JKS to PEM for curl etc.
 # 1) create p12 for openssl > client.p12

@@ -16,8 +16,10 @@ server:
     key-alias: localhost
     #key-store-type: PKCS12
     #key-store-provider: SUN
-    key-store: 'classpath:jsse/certs/server.jks'
+    #key-store: 'classpath:jsse/certs/server.jks'
+    key-store: 'classpath:openssl/certs/server.jks'
     key-store-password: 'server1234'
-    trust-store: 'classpath:jsse/certs/trust.jks'
+    #trust-store: 'classpath:jsse/certs/trust.jks'
+    trust-store: 'classpath:openssl/certs/trust.jks'
     trust-store-password: 'trust1234'
     client-auth: need
