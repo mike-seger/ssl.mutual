@@ -58,4 +58,10 @@ keytool -noprompt -importkeystore -srcstorepass $CLIENTSTORE_PASS -srckeystore c
 # 2) create pem
 openssl pkcs12 -in client.p12 -out client.pem -passin pass:$CLIENTSTORE_PASS -passout pass:$CLIENTSTORE_PASS
 
+#keytool -export -rfc -keystore certs/trust.jks -storepass trust1234 -alias localhost > server.pem
+#keytool -importkeystore -srckeystore certs/client.jks -srcstorepass client1234 -destkeystore client.pfx -deststoretype PKCS12 -deststorepass client1234 -destkeypass client1234
+#openssl pkcs12 -passin pass:client1234 -in client.pfx -out ca.pem -cacerts -nokeys
+#openssl pkcs12 -passin pass:client1234 -in client.pfx -out client.pem -clcerts -nokeys
+#openssl pkcs12 -passin pass:client1234 -in client.pfx -out key.pem -nocerts
+
 cd -
