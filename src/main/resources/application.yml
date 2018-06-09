@@ -1,0 +1,23 @@
+spring:
+  autoconfigure:
+    exclude: org.springframework.boot.autoconfigure.security.SecurityAutoConfiguration
+
+  security:
+    basic:
+      enabled: true
+    user:
+      name: user
+      password: '{noop}password'
+
+server:
+  port: 8443
+  ssl:
+    server.ssl.enabled: true
+    key-alias: localhost
+    #key-store-type: PKCS12
+    #key-store-provider: SUN
+    key-store: 'classpath:jsse/certs/server.jks'
+    key-store-password: 'server1234'
+    trust-store: 'classpath:jsse/certs/trust.jks'
+    trust-store-password: 'trust1234'
+    client-auth: need
