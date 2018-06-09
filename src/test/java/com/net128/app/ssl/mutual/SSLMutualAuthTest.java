@@ -23,6 +23,9 @@ import java.util.List;
 import java.util.Map;
 
 public class SSLMutualAuthTest {
+    private final static String certDir="/openssl/certs/";
+    //private final static String certDir="/jsse/certs/";
+
     public static void main(String[] args) {
         String [] newArgs={
             "https://postman-echo.com/post",
@@ -46,11 +49,11 @@ public class SSLMutualAuthTest {
             final String clientTrustCertPassword = "trust1234";
 
             KeyStore identityKeyStore = KeyStore.getInstance("jks");
-            try (InputStream identityKeyStoreStream = getClass().getResourceAsStream("/jsse/certs/client.jks")){
+            try (InputStream identityKeyStoreStream = getClass().getResourceAsStream(certDir+"client.jks")){
                 identityKeyStore.load(identityKeyStoreStream, clientCertPassword.toCharArray());
 
                 KeyStore trustKeyStore = KeyStore.getInstance("jks");
-                try (InputStream trustKeyStoreStream = getClass().getResourceAsStream("/jsse/certs/trust.jks")){
+                try (InputStream trustKeyStoreStream = getClass().getResourceAsStream(certDir+"trust.jks")){
                     trustKeyStore.load(trustKeyStoreStream, clientTrustCertPassword.toCharArray());
 
                     SSLContext sslContext = SSLContexts.custom()
