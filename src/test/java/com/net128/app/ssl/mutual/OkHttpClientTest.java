@@ -16,7 +16,7 @@ public class OkHttpClientTest {
     private static String keyStoreLocation="/openssl/certs/client.jks";
     private static final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
     private OkHttpClient.Builder clientBuilder=
-        OkHttpClientSslTrustingMutualAuthUtil.getClientBuilder(keyStoreLocation, keyStorePass);
+        OkHttpClientSslTrustingMutualAuthUtil.getClientBuilder(keyStoreLocation, keyStorePass, true);
 
     public static void main(String args []) {
         String [] newArgs={

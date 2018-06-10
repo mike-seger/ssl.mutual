@@ -16,37 +16,25 @@ import java.security.cert.X509Certificate;
 
 public class OkHttpClientSslTrustingMutualAuthUtil {
     private final static Logger logger= LoggerFactory.getLogger(OkHttpClientSslTrustingMutualAuthUtil.class);
-    private static KeyStore readKeyStore(String keyStoreLocation, String keyStorePass) throws IOException, KeyStoreException, CertificateException, NoSuchAlgorithmException {
-        KeyStore ks = KeyStore.getInstance(KeyStore.getDefaultType());
-        char[] password = keyStorePass.toCharArray();
-        try (InputStream is = OkHttpClientSslTrustingMutualAuthUtil.class.getResourceAsStream(keyStoreLocation)) {
-            ks.load(is, password);
-        }
-        return ks;
-    }
 
-    public static OkHttpClient.Builder getClientBuilder(String keyStoreLocation, String keyStorePassword) {
-        X509TrustManager x509TrustManager = new X509TrustManager() {
-            @Override
-            public X509Certificate[] getAcceptedIssuers() {
-                return new X509Certificate[0];
-            }
-
-            @Override
-            public void checkServerTrusted(final X509Certificate[] chain, final String authType) {
-                logger.debug("authType: {}", String.valueOf(authType));
-            }
-
-            @Override
-            public void checkClientTrusted(final X509Certificate[] chain, final String authType) {
-                logger.debug("authType: {}", String.valueOf(authType));
-            }
-        };
-
-        final TrustManager[] trustManagers = new TrustManager[]{x509TrustManager};
-
+    public static OkHttpClient.Builder getClientBuilder(String keyStoreLocation, String keyStorePassword, boolean trustAll) {
         OkHttpClient.Builder okHttpClientBuilder = new OkHttpClient.Builder();
         try {
+            TrustManager[] trustManagers;
+            if(trustAll) {
+                X509TrustManager x509TrustAllManager = new X509TrustManager() {
+                    public X509Certificate[] getAcceptedIssuers() { return new X509Certificate[0]; }
+                    public void checkServerTrusted(final X509Certificate[] chain, final String authType) {}
+                    public void checkClientTrusted(final X509Certificate[] chain, final String authType) {}
+                };
+                trustManagers = new TrustManager[]{x509TrustAllManager};
+            } else {
+                TrustManagerFactory trustManagerFactory=
+                        TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
+                trustManagerFactory.init((KeyStore)null);
+                trustManagers = trustManagerFactory.getTrustManagers();
+            }
+
 //            KeyStore trustStore = readKeyStore(trusttStoreLocation, trustStorePass);
 //            TrustManagerFactory trustManagerFactory = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
 //            trustManagerFactory.init(trustStore);
@@ -61,21 +49,27 @@ public class OkHttpClientSslTrustingMutualAuthUtil {
             SecureRandom secureRandom = new SecureRandom();
             sslContext.init(keyManagerFactory.getKeyManagers(), trustManagers, secureRandom);
             SSLSocketFactory sslSocketFactory = sslContext.getSocketFactory();
-            okHttpClientBuilder.sslSocketFactory(sslSocketFactory, x509TrustManager);
+            okHttpClientBuilder.sslSocketFactory(sslSocketFactory, (X509TrustManager) trustManagers[0]);
         } catch (Exception e) {
             e.printStackTrace();
         }
 
         HostnameVerifier hostnameVerifier = (hostname, session) -> {
-            logger.debug("hostname: {}", String.valueOf(hostname));
-            if (hostname.matches("(localhost|server|127.0.0.1|postman-echo.com)")) {
-                return true;
-            }
+            if (hostname.matches("(localhost|server|127.0.0.1|postman-echo.com)")) { return true; }
             return false;
         };
 
         okHttpClientBuilder.hostnameVerifier(hostnameVerifier);
 
         return okHttpClientBuilder;
+    }
+
+    private static KeyStore readKeyStore(String keyStoreLocation, String keyStorePass) throws IOException, KeyStoreException, CertificateException, NoSuchAlgorithmException {
+        KeyStore ks = KeyStore.getInstance(KeyStore.getDefaultType());
+        char[] password = keyStorePass.toCharArray();
+        try (InputStream is = OkHttpClientSslTrustingMutualAuthUtil.class.getResourceAsStream(keyStoreLocation)) {
+            ks.load(is, password);
+        }
+        return ks;
     }
 }
