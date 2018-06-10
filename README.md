@@ -31,3 +31,9 @@ openssl s_client -host server -port 8443
 openssl s_client -showcerts -connect server:8443
 openssl s_client -state -nbio -connect localhost:8443 2>&1 | grep "^SSL"
 ```
+
+# SSL debugging JVM arguments
+```
+-Djavax.net.debug=ssl:handshake:verbose:keymanager:trustmanager
+-Djava.security.debug=access:stack
+```
