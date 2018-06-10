@@ -35,10 +35,6 @@ public class OkHttpClientSslTrustingMutualAuthUtil {
                 trustManagers = trustManagerFactory.getTrustManagers();
             }
 
-//            KeyStore trustStore = readKeyStore(trusttStoreLocation, trustStorePass);
-//            TrustManagerFactory trustManagerFactory = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
-//            trustManagerFactory.init(trustStore);
-
             KeyStore keyStore = readKeyStore(keyStoreLocation, keyStorePassword);
             KeyManagerFactory keyManagerFactory = KeyManagerFactory.getInstance(KeyManagerFactory.getDefaultAlgorithm());
             keyManagerFactory.init(keyStore, keyStorePassword.toCharArray());
@@ -51,7 +47,7 @@ public class OkHttpClientSslTrustingMutualAuthUtil {
             SSLSocketFactory sslSocketFactory = sslContext.getSocketFactory();
             okHttpClientBuilder.sslSocketFactory(sslSocketFactory, (X509TrustManager) trustManagers[0]);
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.error("Failed to create builder", e);
         }
 
         HostnameVerifier hostnameVerifier = (hostname, session) -> {
