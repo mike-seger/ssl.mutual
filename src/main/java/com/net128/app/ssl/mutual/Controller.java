@@ -16,7 +16,7 @@ import java.util.Date;
 @RestController
 @RequestMapping("/api")
 public class Controller {
-    private Logger logger= LoggerFactory.getLogger(Controller.class);
+    private final static Logger logger= LoggerFactory.getLogger(Controller.class);
     private ObjectMapper mapper = new ObjectMapper();;
 
     @PostMapping("post")
